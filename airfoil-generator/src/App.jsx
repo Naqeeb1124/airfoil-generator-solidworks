@@ -25,7 +25,8 @@ function App() {
     setIsGenerating(true)
     try {
       // Simulate API call - in real implementation, this would call the Python backend
-      const response = await fetch('/api/generate-naca', {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${apiUrl}/api/generate-naca`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +68,8 @@ function App() {
       formData.append('csv_file', file)
       formData.append('solidworks_format', outputFormat === 'solidworks')
 
-      const response = await fetch('/api/process-csv', {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${apiUrl}/api/process-csv`, {
         method: 'POST',
         body: formData,
       })

@@ -1,0 +1,31 @@
+
+services:
+  # Backend Service (Python/Flask)
+  - type: web
+    name: airfoil-backend
+    env: python
+    rootDir: airfoil-backend
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn --workers 4 --bind 0.0.0.0:$PORT src.main:app"
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.4
+
+  # Frontend Service (React/Vite)
+  - type: static
+    name: airfoil-frontend
+    rootDir: airfoil-generator
+    buildCommand: "pnpm install && pnpm run build"
+    publishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: airfoil-backend
+          property: url
+    # Add a rewrite rule for single-page applications
+    routes:
+      - type: rewrite
+        source: "/*"
+        destination: "/index.html"
